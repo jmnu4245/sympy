@@ -3153,7 +3153,12 @@ class Expr(Basic, EvalfMixin):
 
             try:
                 from sympy.simplify.radsimp import collect
-                return collect(s1, x) + o
+                from sympy.polys.polytools import cancel
+                collected = collect(s1, x, evaluate=False)
+                res = S.Zero
+                for power, coef in collected.items():
+                    res += cancel(coef) * power
+                return res + o
             except NotImplementedError:
                 return s1 + o
 
